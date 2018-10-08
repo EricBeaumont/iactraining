@@ -12,8 +12,9 @@ resource "aws_vpc" "vpc_eric" {
 }
 
 resource "aws_subnet" "subnet_eric" {
-  vpc_id     = "${aws_vpc.vpc_eric.id}"
-  cidr_block = "172.23.1.0/24"
+  vpc_id            = "${aws_vpc.vpc_eric.id}"
+  cidr_block        = "172.23.1.0/24"
+  availability_zone = "eu-west-1a"
 
   tags {
     Name       = "subnet_eric"
