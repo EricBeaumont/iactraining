@@ -1,24 +1,24 @@
 provider "aws" {
-  region = "eu-west-1"
+  region = "${var.region}"
 }
 
 resource "aws_vpc" "vpc_eric" {
-  cidr_block = "172.23.0.0/16"
+  cidr_block = "${var.vpc_cidr}"
 
   tags {
     Name       = "vpc_eric"
-    CostCenter = "mycostcenter"
+    CostCenter = "${var.TagCostCenter}"
   }
 }
 
 resource "aws_subnet" "subnet_eric" {
   vpc_id            = "${aws_vpc.vpc_eric.id}"
-  cidr_block        = "172.23.1.0/24"
-  availability_zone = "eu-west-1a"
+  cidr_block        = "${var.subnet_cidr}"
+  availability_zone = "${var.my_az}"
 
   tags {
     Name       = "subnet_eric"
-    CostCenter = "mycostcenter"
+    CostCenter = "${var.TagCostCenter}"
   }
 }
 
