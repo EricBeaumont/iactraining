@@ -21,3 +21,12 @@ resource "aws_subnet" "subnet_eric" {
     CostCenter = "mycostcenter"
   }
 }
+
+resource "aws_internet_gateway" "gw_eric" {
+  vpc_id = "${aws_vpc.vpc_eric.id}"
+
+  tags {
+    Name       = "gw_eric"
+    CostCenter = "mycostcenter"
+  }
+}
