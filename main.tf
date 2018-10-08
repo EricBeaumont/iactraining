@@ -30,3 +30,17 @@ resource "aws_internet_gateway" "gw_eric" {
     CostCenter = "mycostcenter"
   }
 }
+
+resource "aws_route_table" "route_eric" {
+  vpc_id = "${aws_vpc.vpc_eric.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.gw_eric.id}"
+  }
+
+  tags {
+    Name       = "route_eric"
+    CostCenter = "mycostcenter"
+  }
+}
