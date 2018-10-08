@@ -44,3 +44,8 @@ resource "aws_route_table" "route_eric" {
     CostCenter = "mycostcenter"
   }
 }
+
+resource "aws_route_table_association" "route_association_eric" {
+  subnet_id      = "${aws_subnet.subnet_eric.id}"
+  route_table_id = "${aws_route_table.route_eric.id}"
+}
