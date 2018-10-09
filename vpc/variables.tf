@@ -7,11 +7,11 @@ variable "vpc_cidr" {
 }
 
 variable "subnet_cidr" {
-  type = "string"
+  type = "list"
 }
 
-variable "my_az" {
-  type = "string"
+variable "my_azs" {
+  type = "list"
 }
 
 variable "TagCostCenter" {

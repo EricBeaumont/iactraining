@@ -12,9 +12,10 @@ resource "aws_vpc" "vpc_eric" {
 }
 
 resource "aws_subnet" "subnet_eric" {
+  count             = 2
   vpc_id            = "${aws_vpc.vpc_eric.id}"
-  cidr_block        = "${var.subnet_cidr}"
-  availability_zone = "${var.my_az}"
+  cidr_block        = "${element(var.subnet_cidr,count.index)}"
+  availability_zone = "${element(var.my_azs,count.index)}"
 
   tags {
     Name       = "subnet_eric"
@@ -46,6 +47,7 @@ resource "aws_route_table" "route_eric" {
 }
 
 resource "aws_route_table_association" "route_association_eric" {
-  subnet_id      = "${aws_subnet.subnet_eric.id}"
+  count          = 2
+  subnet_id      = "${element(aws_subnet.subnet_eric.*.id,count.index)}"
   route_table_id = "${aws_route_table.route_eric.id}"
 }
