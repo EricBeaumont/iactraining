@@ -7,7 +7,7 @@ data "aws_ami" "ami_eric" {
 
   filter {
     name   = "name"
-    values = ["ubuntu*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   owners = ["099720109477"]
@@ -36,9 +36,11 @@ data "aws_vpc" "vpc_eric" {
 }
 
 resource "aws_instance" "ec2_eric" {
-  ami           = "${data.aws_ami.ami_eric.id}"
-  instance_type = "t2.micro"
-  subnet_id     = "${data.aws_subnet.subnet_webapp.id}"
+  ami                         = "${data.aws_ami.ami_eric.id}"
+  instance_type               = "t2.micro"
+  subnet_id                   = "${data.aws_subnet.subnet_webapp.id}"
+  security_groups             = ["${aws_security_group.security_app.id}"]
+  associate_public_ip_address = true
 
   tags {
     Name       = "WebApp"
@@ -54,14 +56,14 @@ resource "aws_security_group" "security_app" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "-1"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
