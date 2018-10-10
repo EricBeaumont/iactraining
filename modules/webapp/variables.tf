@@ -2,6 +2,10 @@ variable "region" {
   type = "string"
 }
 
+variable "ami_owners" {
+type="list"
+}
+
 variable "type_instance" {
   type = "string"
 }

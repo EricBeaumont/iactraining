@@ -10,8 +10,10 @@ data "aws_ami" "ami_eric" {
     values = ["${var.my_ami}"]
   }
 
-  owners = ["099720109477"]
+#   owners = ["099720109477"]
+owners = ["${var.ami_owners}"]
 }
+
 
 data "template_file" "template_user" {
   template = "${file("${path.module}/lab00/webapp/userdata.tpl")}"
@@ -32,7 +34,7 @@ data "aws_vpc" "vpc_eric" {
   }
 }
 
-resource "aws_instance" "ec2_eric" {
+/* resource "aws_instance" "ec2_eric" {
   ami                         = "${data.aws_ami.ami_eric.id}"
   instance_type               = "${var.type_instance}"
   subnet_id                   = "${element(data.aws_subnet_ids.subnet_webapp.ids,count.index)}"
@@ -46,6 +48,7 @@ resource "aws_instance" "ec2_eric" {
     CostCenter = "${var.TagCostCenter}"
   }
 }
+*/
 
 resource "aws_security_group" "security_app" {
   name        = "security_app"
@@ -85,7 +88,8 @@ subnets= ["${data.aws_subnet_ids.subnet_webapp.ids}"]
     target              = "${var.elb_target}"
     interval            = "${var.elb_interval}"
   }
-instances = ["${aws_instance.ec2_eric.*.id}"]
+# instances = ["${aws_launch_configuration.aws_launch_eric.id}"]
+security_groups=["${aws_security_group.security_elb.id}"]
 
 
   tags {
@@ -93,4 +97,43 @@ instances = ["${aws_instance.ec2_eric.*.id}"]
   }
 }
 
+resource "aws_launch_configuration" "aws_launch_eric" {
+
+name = "webapp_eric"
+image_id="${data.aws_ami.ami_eric.id}"
+instance_type="${var.type_instance}"
+security_groups=["${aws_security_group.security_app.id}"]
+associate_public_ip_address = true
+}
+
+resource "aws_autoscaling_group" "asg_eric" {
+name="asg_eric_app"
+
+load_balancers=["${aws_elb.elb_eric.id}"]
+launch_configuration="${aws_launch_configuration.aws_launch_eric.name}"
+max_size=5
+min_size=3
+vpc_zone_identifier=["${data.aws_subnet_ids.subnet_webapp.ids}"]
+
+}
+
+resource "aws_security_group" "security_elb" {
+  name        = "security_elb"
+  description = "filter inbound traffic"
+  vpc_id      = "${data.aws_vpc.vpc_eric.id}"
+
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 

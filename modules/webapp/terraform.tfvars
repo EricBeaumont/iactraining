@@ -14,6 +14,7 @@ elb_unhealthy_threshold=3
 elb_timeout=30
 elb_target="http:8000/"
 elb_interval=30
+ami_owners=["self"]
 
 
 
