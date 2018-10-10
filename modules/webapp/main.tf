@@ -36,7 +36,7 @@ resource "aws_instance" "ec2_eric" {
   ami                         = "${data.aws_ami.ami_eric.id}"
   instance_type               = "${var.type_instance}"
   subnet_id                   = "${element(data.aws_subnet_ids.subnet_webapp.ids,count.index)}"
-  security_groups             = ["${aws_security_group.security_app.id}"]
+  vpc_security_group_ids             = ["${aws_security_group.security_app.id}"]
   associate_public_ip_address = true
   user_data                   = "${data.template_file.template_user.rendered}"
   count                       = "${length(data.aws_subnet_ids.subnet_webapp.ids)}"
@@ -85,8 +85,12 @@ subnets= ["${data.aws_subnet_ids.subnet_webapp.ids}"]
     target              = "${var.elb_target}"
     interval            = "${var.elb_interval}"
   }
+instances = ["${aws_instance.ec2_eric.*.id}"]
+
 
   tags {
     CostCenter = "${var.TagCostCenter}"
   }
 }
+
+
