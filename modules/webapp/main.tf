@@ -35,7 +35,7 @@ data "aws_vpc" "vpc_eric" {
 resource "aws_instance" "ec2_eric" {
   ami                         = "${data.aws_ami.ami_eric.id}"
   instance_type               = "${var.type_instance}"
-  subnet_id                   = ["${element(data.aws_subnet_ids.subnet_webapp.ids,count.index)}"
+  subnet_id                   = "${element(data.aws_subnet_ids.subnet_webapp.ids,count.index)}"
   security_groups             = ["${aws_security_group.security_app.id}"]
   associate_public_ip_address = true
   user_data                   = "${data.template_file.template_user.rendered}"
@@ -69,7 +69,7 @@ resource "aws_security_group" "security_app" {
 
 resource "aws_elb" "elb_eric" {
   name               = "${var.elb_name}"
-subnets= "${element(data.aws_subnet_ids.subnet_webapp.ids,count.index)}"
+subnets= ["${data.aws_subnet_ids.subnet_webapp.ids}"]
 
   listener {
     instance_port     = "${var.elb_listener_port}"
